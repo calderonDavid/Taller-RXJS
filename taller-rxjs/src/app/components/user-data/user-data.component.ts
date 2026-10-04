@@ -10,6 +10,6 @@ import { User } from '../../interfaces/user';
   styleUrls: ['./user-data.component.scss']
 })
 export class UserDataComponent {
-  // El Input permite recibir el objeto 'user' desde el componente padre
+  // Recibimos el user desde el padre
   @Input() user!: User; 
 }
