@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; // Necesario para el ngModel de la barra de búsqueda
+import { FormsModule } from '@angular/forms';
+import { switchMap, of } from 'rxjs'; // Operadores explicados en la clase
+
 import { ApiService } from './services/api.service';
 import { User } from './interfaces/user';
 import { Post } from './interfaces/post';
@@ -12,25 +13,20 @@ import { UserPostsComponent } from './components/user-posts/user-posts.component
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet,CommonModule, FormsModule, UserDataComponent, UserPostsComponent],
+  standalone: true,
+  imports: [CommonModule, FormsModule, UserDataComponent, UserPostsComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  // Variables de estado
   usernameToSearch: string = '';
   user: User | null = null;
   posts: Post[] = [];
-  
-  // Usamos un diccionario (objeto) para guardar los comentarios asociados al ID de cada post
   commentsByPost: { [postId: number]: Comment[] } = {};
-  
   errorMessage: string = '';
 
-  // Inyectamos el servicio
   constructor(private apiService: ApiService) {}
 
-  // Función que se ejecuta al enviar el buscador
   buscarUsuario() {
     if (!this.usernameToSearch.trim()) return;
 
@@ -40,16 +36,30 @@ export class AppComponent {
     this.posts = [];
     this.commentsByPost = {};
 
-    // 1. Consultamos el usuario y nos suscribimos al resultado
-    this.apiService.getUserByUsername(this.usernameToSearch).subscribe({
-      next: (response) => {
-        // La API devuelve un arreglo; verificamos si tiene datos
+    // 1. Buscamos el usuario
+    // 2. Usamos switchMap para encadenar la búsqueda de los posts SIN anidar subscribes
+    // (Exactamente como hace el profesor en el minuto 97:00 del video)
+    this.apiService.getUserByUsername(this.usernameToSearch).pipe(
+      switchMap((response) => {
         if (response.users && response.users.length > 0) {
           this.user = response.users[0];
-          this.buscarPosts(this.user.id); // Si existe, buscamos sus posts
+          // switchMap toma este Observable (posts) y lo envía al subscribe
+          return this.apiService.getPostsByUser(this.user.id);
         } else {
-          // Si el arreglo está vacío, el usuario no existe
           this.errorMessage = 'El nombre de usuario no existe. Por favor, intenta con otro.';
+          // 'of' (visto en 02_observables) emite null para no continuar la búsqueda de posts
+          return of(null);
+        }
+      })
+    ).subscribe({
+      next: (postResponse) => {
+        if (postResponse) {
+          this.posts = postResponse.posts;
+
+          // Por cada post encontrado, consultamos sus comentarios
+          this.posts.forEach((post) => {
+            this.buscarComentarios(post.id);
+          });
         }
       },
       error: (err) => {
@@ -59,26 +69,9 @@ export class AppComponent {
     });
   }
 
-  // 2. Consultamos los posts del usuario encontrado
-  buscarPosts(userId: number) {
-    this.apiService.getPostsByUser(userId).subscribe({
-      next: (response) => {
-        this.posts = response.posts;
-        
-        // 3. Por cada post encontrado, disparamos la consulta de sus comentarios
-        this.posts.forEach(post => {
-          this.buscarComentarios(post.id);
-        });
-      },
-      error: (err) => console.error('Error al cargar posts', err)
-    });
-  }
-
-  // 4. Consultamos los comentarios de un post específico
   buscarComentarios(postId: number) {
     this.apiService.getCommentsByPost(postId).subscribe({
       next: (response) => {
-        // Guardamos los comentarios en el diccionario usando el ID del post como llave
         this.commentsByPost[postId] = response.comments;
       },
       error: (err) => console.error(`Error al cargar comentarios del post ${postId}`, err)
