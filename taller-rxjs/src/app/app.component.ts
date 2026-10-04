@@ -59,7 +59,7 @@ export class AppComponent {
         }
       },
       error: (err) => {
-        this.errorMessage = 'Ocurrió un error al consultar el servidor.';
+        this.errorMessage = 'El nombre de usuario no existe. Por favor, intenta con otro.';
         console.error(err);
       }
     });

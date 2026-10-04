@@ -1,38 +1,36 @@
-<div class="container my-5">
-  <h2 class="text-center mb-4 text-primary">Red Social DummyJSON</h2>
+<main class="container my-5">
+  <header>
+    <h1 class="h2 text-center mb-4 text-primary">Red Social DummyJSON</h1>
+  </header>
 
   <!-- Sección 1: Barra de búsqueda -->
-  <div class="row justify-content-center mb-4">
-    <div class="col-md-6">
-      <div class="input-group shadow-sm">
-        <span class="input-group-text bg-white">
-          <i class="bi bi-search"></i>
-        </span>
-        <input
-          type="text"
-          class="form-control"
-          placeholder="Buscar por username (ej: emilys, dylanw)..."
-          [(ngModel)]="usernameToSearch"
-          (keyup.enter)="buscarUsuario()">
-        <button class="btn btn-primary" type="button" (click)="buscarUsuario()">
-          Buscar
-        </button>
-      </div>
+  <form role="search" class="col-md-6 mx-auto mb-4" (ngSubmit)="buscarUsuario()">
+    <label for="username" class="visually-hidden">Buscar usuario por username</label>
+    <div class="input-group shadow-sm">
+      <span class="input-group-text bg-white">
+        <i class="bi bi-search" aria-hidden="true"></i>
+      </span>
+      <input
+        id="username"
+        name="username"
+        type="text"
+        class="form-control"
+        placeholder="Buscar por username (ej: emilys, dylanw)..."
+        [(ngModel)]="usernameToSearch">
+      <button class="btn btn-primary" type="submit">
+        Buscar
+      </button>
     </div>
-  </div>
+  </form>
 
   <!-- Mensaje de error -->
-  <div class="row justify-content-center" *ngIf="errorMessage">
-    <div class="col-md-6 text-center">
-      <div class="alert alert-danger shadow-sm" role="alert">
-        <i class="bi bi-exclamation-triangle-fill me-2"></i>
-        {{ errorMessage }}
-      </div>
-    </div>
-  </div>
+  <p class="alert alert-danger text-center shadow-sm col-md-6 mx-auto" role="alert" *ngIf="errorMessage">
+    <i class="bi bi-exclamation-triangle-fill me-2" aria-hidden="true"></i>
+    {{ errorMessage }}
+  </p>
 
-  <!-- Contenedor principal -->
-  <div *ngIf="user && !errorMessage">
+  <!-- Contenido principal -->
+  <ng-container *ngIf="user && !errorMessage">
 
     <!-- Sección 2: Datos de Usuario -->
     <app-user-data [user]="user"></app-user-data>
@@ -45,5 +43,5 @@
       [commentsByPost]="commentsByPost">
     </app-user-posts>
 
-  </div>
-</div>
+  </ng-container>
+</main>
