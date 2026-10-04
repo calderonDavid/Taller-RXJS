@@ -4,7 +4,7 @@ export interface User {
   lastName: string;
   username: string;
   email: string;
-  image: string; // Útil para mostrar la foto en los "Datos de usuario"
+  image: string;
 }
 
 export interface UserResponse {

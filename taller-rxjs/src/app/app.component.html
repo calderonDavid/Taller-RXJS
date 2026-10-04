@@ -5,11 +5,13 @@
   <div class="row justify-content-center mb-4">
     <div class="col-md-6">
       <div class="input-group shadow-sm">
-        <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
-        <input 
-          type="text" 
-          class="form-control" 
-          placeholder="Buscar por username (ej: emilys, atuny0)..." 
+        <span class="input-group-text bg-white">
+          <i class="bi bi-search"></i>
+        </span>
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Buscar por username (ej: emilys, dylanw)..."
           [(ngModel)]="usernameToSearch"
           (keyup.enter)="buscarUsuario()">
         <button class="btn btn-primary" type="button" (click)="buscarUsuario()">
@@ -19,7 +21,7 @@
     </div>
   </div>
 
-  <!-- Mensaje de error si el usuario no existe -->
+  <!-- Mensaje de error -->
   <div class="row justify-content-center" *ngIf="errorMessage">
     <div class="col-md-6 text-center">
       <div class="alert alert-danger shadow-sm" role="alert">
@@ -29,19 +31,19 @@
     </div>
   </div>
 
-  <!-- Contenedor principal: Solo se muestra si el usuario existe y no hay errores -->
+  <!-- Contenedor principal -->
   <div *ngIf="user && !errorMessage">
-    
-    <!-- Sección 2: Componente de Datos de Usuario -->
+
+    <!-- Sección 2: Datos de Usuario -->
     <app-user-data [user]="user"></app-user-data>
 
     <hr class="my-5 border-secondary">
 
-    <!-- Sección 3: Componente de Posts del Usuario -->
-    <app-user-posts 
-      [posts]="posts" 
+    <!-- Sección 3: Posts del Usuario -->
+    <app-user-posts
+      [posts]="posts"
       [commentsByPost]="commentsByPost">
     </app-user-posts>
-    
+
   </div>
 </div>

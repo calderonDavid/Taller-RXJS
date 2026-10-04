@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { switchMap, of } from 'rxjs'; // Operadores explicados en la clase
@@ -25,7 +25,7 @@ export class AppComponent {
   commentsByPost: { [postId: number]: Comment[] } = {};
   errorMessage: string = '';
 
-  constructor(private apiService: ApiService) {}
+  apiService: ApiService= inject(ApiService);
 
   buscarUsuario() {
     if (!this.usernameToSearch.trim()) return;
@@ -36,9 +36,7 @@ export class AppComponent {
     this.posts = [];
     this.commentsByPost = {};
 
-    // 1. Buscamos el usuario
-    // 2. Usamos switchMap para encadenar la búsqueda de los posts SIN anidar subscribes
-    // (Exactamente como hace el profesor en el minuto 97:00 del video)
+    // Usamos switchMap para encadenar la búsqueda de los posts
     this.apiService.getUserByUsername(this.usernameToSearch).pipe(
       switchMap((response) => {
         if (response.users && response.users.length > 0) {
@@ -47,7 +45,7 @@ export class AppComponent {
           return this.apiService.getPostsByUser(this.user.id);
         } else {
           this.errorMessage = 'El nombre de usuario no existe. Por favor, intenta con otro.';
-          // 'of' (visto en 02_observables) emite null para no continuar la búsqueda de posts
+          // 'of'  emite null para no continuar la búsqueda de posts
           return of(null);
         }
       })

@@ -15,15 +15,16 @@ export class ApiService {
 
   //Busca un usuario por su username
   getUserByUsername(username: string): Observable<UserResponse> {
-    return this.http.get<UserResponse>(`${this.baseUrl}/users/filter?key=username&value=${username}`);
+    const value = encodeURIComponent(username);
+    return this.http.get<UserResponse>(`${this.baseUrl}/users/filter?key=username&value=${value}`);
   }
 
-  // 2. Trae los posts relacionados al usuario mediante su ID
+  // Trae los posts relacionados al usuario mediante su ID
   getPostsByUser(userId: number): Observable<PostResponse> {
     return this.http.get<PostResponse>(`${this.baseUrl}/posts/user/${userId}`);
   }
 
-  //Trae los comentarios relacionados a un post específico
+  // Trae los comentarios relacionados a un post específico
   getCommentsByPost(postId: number): Observable<CommentResponse> {
     return this.http.get<CommentResponse>(`${this.baseUrl}/comments/post/${postId}`);
   }

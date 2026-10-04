@@ -14,7 +14,7 @@
         <h5 class="card-title fw-bold text-dark">{{ post.title }}</h5>
         <p class="card-text">{{ post.body }}</p>
 
-        <!-- Reacciones (Adicional carita feliz) -->
+        <!-- Reacciones -->
         <div class="d-flex align-items-center mb-3 mt-3">
           <span class="badge rounded-pill bg-white text-dark border border-secondary me-2 p-2 shadow-sm">
             <i class="bi bi-hand-thumbs-up-fill text-primary me-1"></i> 
@@ -31,16 +31,16 @@
         <!-- Sección de Comentarios -->
         <h6 class="text-muted mb-3"><i class="bi bi-chat-left-text me-2"></i>Comentarios</h6>
         
-        <!-- Contenedor de comentarios con altura máxima y scroll -->
+        <!-- Contenedor de comentarios -->
         <div class="comments-section" style="max-height: 250px; overflow-y: auto;">
           
-          <!-- Mensaje de carga si los comentarios aún no llegan -->
+          <!-- Mensaje de carga -->
           <div *ngIf="!commentsByPost[post.id]" class="text-center text-muted small py-2">
             <div class="spinner-border spinner-border-sm me-2" role="status"></div>
             Cargando comentarios...
           </div>
 
-          <!-- Iteramos sobre los comentarios específicos de este post -->
+          <!-- Iteramos sobre los comentarios del post -->
           <div *ngIf="commentsByPost[post.id]">
             <div *ngFor="let comment of commentsByPost[post.id]" class="mb-3 bg-white p-3 rounded-3 shadow-sm border border-light">
               <div class="d-flex justify-content-between align-items-center mb-1">
@@ -48,7 +48,7 @@
                 <strong class="text-primary" style="font-size: 0.9rem;">
                   {{ comment.user.fullName }}
                 </strong>
-                <span class="text-muted small">&#64;{{ comment.user.username }}</span>
+                <span class="text-muted small">{{ comment.user.username }}</span>
               </div>
               <p class="mb-0 text-dark" style="font-size: 0.95rem;">
                 {{ comment.body }}
@@ -61,7 +61,7 @@
             </div>
           </div>
 
-        </div> <!-- Fin de comments-section -->
+        </div>
       </div>
     </div>
   </div>
