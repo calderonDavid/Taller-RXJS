@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { switchMap, of } from 'rxjs'; // Operadores explicados en la clase
+import { mergeMap } from 'rxjs';
 
 import { ApiService } from './services/api.service';
 import { User } from './interfaces/user';
@@ -25,7 +25,7 @@ export class AppComponent {
   commentsByPost: { [postId: number]: Comment[] } = {};
   errorMessage: string = '';
 
-  apiService: ApiService= inject(ApiService);
+  constructor(private apiService: ApiService) {}
 
   buscarUsuario() {
     if (!this.usernameToSearch.trim()) return;
@@ -38,15 +38,13 @@ export class AppComponent {
 
     // Usamos switchMap para encadenar la búsqueda de los posts
     this.apiService.getUserByUsername(this.usernameToSearch).pipe(
-      switchMap((response) => {
+      mergeMap((response) => {
         if (response.users && response.users.length > 0) {
           this.user = response.users[0];
           // switchMap toma este Observable (posts) y lo envía al subscribe
           return this.apiService.getPostsByUser(this.user.id);
         } else {
-          this.errorMessage = 'El nombre de usuario no existe. Por favor, intenta con otro.';
-          // 'of'  emite null para no continuar la búsqueda de posts
-          return of(null);
+          throw new Error('El nombre de usuario no existe. Por favor, intenta con otro.');
         }
       })
     ).subscribe({

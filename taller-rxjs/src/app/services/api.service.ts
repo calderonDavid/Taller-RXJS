@@ -15,8 +15,7 @@ export class ApiService {
 
   //Busca un usuario por su username
   getUserByUsername(username: string): Observable<UserResponse> {
-    const value = encodeURIComponent(username);
-    return this.http.get<UserResponse>(`${this.baseUrl}/users/filter?key=username&value=${value}`);
+    return this.http.get<UserResponse>(`${this.baseUrl}/users/filter?key=username&value=${username}`);
   }
 
   // Trae los posts relacionados al usuario mediante su ID
