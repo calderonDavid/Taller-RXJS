@@ -36,12 +36,12 @@ export class AppComponent {
     this.posts = [];
     this.commentsByPost = {};
 
-    // Usamos switchMap para encadenar la búsqueda de los posts
+    // Usamos mergeMap para encadenar la búsqueda de los posts
     this.apiService.getUserByUsername(this.usernameToSearch).pipe(
       mergeMap((response) => {
         if (response.users && response.users.length > 0) {
           this.user = response.users[0];
-          // switchMap toma este Observable (posts) y lo envía al subscribe
+          // mergeMap nos permite encadenar la llamada a la API
           return this.apiService.getPostsByUser(this.user.id);
         } else {
           throw new Error('El nombre de usuario no existe. Por favor, intenta con otro.');
@@ -52,7 +52,7 @@ export class AppComponent {
         if (postResponse) {
           this.posts = postResponse.posts;
 
-          // Por cada post encontrado, consultamos sus comentarios
+          // Consultamos los comentarios de cada post
           this.posts.forEach((post) => {
             this.buscarComentarios(post.id);
           });
