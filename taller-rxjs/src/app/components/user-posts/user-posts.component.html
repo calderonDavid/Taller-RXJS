@@ -1,0 +1,76 @@
+<div class="row" *ngIf="posts.length > 0">
+  <div class="col-12 mb-4">
+    <h3 class="text-secondary border-bottom pb-2">
+      <i class="bi bi-file-post me-2"></i>Publicaciones del usuario
+    </h3>
+  </div>
+
+  <!-- Iteramos sobre cada post -->
+  <div class="col-12 mb-4" *ngFor="let post of posts">
+    <div class="card shadow-sm border-0 bg-light">
+      <div class="card-body">
+        
+        <!-- Contenido del Post -->
+        <h5 class="card-title fw-bold text-dark">{{ post.title }}</h5>
+        <p class="card-text">{{ post.body }}</p>
+
+        <!-- Reacciones (Adicional carita feliz) -->
+        <div class="d-flex align-items-center mb-3 mt-3">
+          <span class="badge rounded-pill bg-white text-dark border border-secondary me-2 p-2 shadow-sm">
+            <i class="bi bi-hand-thumbs-up-fill text-primary me-1"></i> 
+            {{ post.reactions.likes || 0 }}
+          </span>
+          <span class="badge rounded-pill bg-white text-dark border border-secondary p-2 shadow-sm">
+            <i class="bi bi-hand-thumbs-down-fill text-danger me-1"></i> 
+            {{ post.reactions.dislikes || 0 }}
+          </span>
+        </div>
+
+        <hr class="text-muted">
+
+        <!-- Sección de Comentarios -->
+        <h6 class="text-muted mb-3"><i class="bi bi-chat-left-text me-2"></i>Comentarios</h6>
+        
+        <!-- Contenedor de comentarios con altura máxima y scroll -->
+        <div class="comments-section" style="max-height: 250px; overflow-y: auto;">
+          
+          <!-- Mensaje de carga si los comentarios aún no llegan -->
+          <div *ngIf="!commentsByPost[post.id]" class="text-center text-muted small py-2">
+            <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+            Cargando comentarios...
+          </div>
+
+          <!-- Iteramos sobre los comentarios específicos de este post -->
+          <div *ngIf="commentsByPost[post.id]">
+            <div *ngFor="let comment of commentsByPost[post.id]" class="mb-3 bg-white p-3 rounded-3 shadow-sm border border-light">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <!-- Mostramos el nombre de quien comentó (Requerimiento explícito) -->
+                <strong class="text-primary" style="font-size: 0.9rem;">
+                  {{ comment.user.fullName }}
+                </strong>
+                <span class="text-muted small">&#64;{{ comment.user.username }}</span>
+              </div>
+              <p class="mb-0 text-dark" style="font-size: 0.95rem;">
+                {{ comment.body }}
+              </p>
+            </div>
+            
+            <!-- Si el arreglo llega vacío -->
+            <div *ngIf="commentsByPost[post.id].length === 0" class="text-muted small fst-italic">
+              Nadie ha comentado esta publicación aún.
+            </div>
+          </div>
+
+        </div> <!-- Fin de comments-section -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Si no tiene posts -->
+<div class="row" *ngIf="posts.length === 0">
+  <div class="col-12 text-center text-muted py-5">
+    <i class="bi bi-journal-x fs-1 d-block mb-3"></i>
+    <h5>Este usuario no tiene publicaciones.</h5>
+  </div>
+</div>
